@@ -19,6 +19,8 @@ def main():
     print("Zoom Email:")
     user_email = input()
     user_password = getpass.getpass()
+    print("Name:")
+    user_name = input()
     print("Getting courses...")
     courses = get_courses("courses.txt")  # [[course1, 15:40], [course2, 08:40]]
     print("Done!")
@@ -32,7 +34,7 @@ def main():
                 if not course_finished(course[1], course[2]):  # it's not this course's time yet.
                     continue
                 else:   # it's showtime!
-                    zoom_automate(course[0], user_email, user_password, course[1] + 2, course[2] - 10)  # 2 x 50 min, 1 x 10 min
+                    zoom_automate(course[0], user_email, user_password, user_name, course[1] + 2, course[2] - 10)  # 2 x 50 min, 1 x 10 min
                     course[3] = True  # Mark course as done.
             else:   # This course has been attended.
                 continue
@@ -60,7 +62,7 @@ def zoom_automate2(zoom_id, user_email, user_password, term_hour, term_minute):
     # pyautogui.click(fw.left+308, fw.top+240)
     
 
-def zoom_automate(zoom_id, user_email, user_password, term_hour, term_minute):
+def zoom_automate(zoom_id, user_email, user_password, user_name, term_hour, term_minute):
     zoom = launch_zoom()
     print("Wait for zoom to launch.")
     time.sleep(5)
@@ -76,7 +78,7 @@ def zoom_automate(zoom_id, user_email, user_password, term_hour, term_minute):
     else:
         print("you are already logged in.")
 
-    join_meeting(zoom, zoom_id)
+    join_meeting(zoom, zoom_id, user_name)
 
     return
 
@@ -107,7 +109,7 @@ def sign_in(zoom, user_email, user_password):
     time.sleep(5)
 
 
-def join_meeting(zoom, meeting_number, meeting_password = ''):
+def join_meeting(zoom, meeting_number, user_name, meeting_password = ''):
     print("Begin to join meeting: "+str(meeting_number))
     fw = pyautogui.getActiveWindow()
     pyautogui.click(fw.left+400, fw.top+335)
@@ -116,6 +118,8 @@ def join_meeting(zoom, meeting_number, meeting_password = ''):
     pyautogui.write(['tab', 'tab'])
     pyautogui.hotkey('ctrl', 'a')
     pyautogui.write(['backspace'])
+    time.sleep(1)
+    pyautogui.write(user_name)
 
 
 def join_meeting2(browser, meeting_number):
