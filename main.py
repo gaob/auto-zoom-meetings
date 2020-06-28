@@ -4,32 +4,18 @@ from selenium.webdriver.support.ui import WebDriverWait
 import selenium.common.exceptions
 import time, datetime, platform
 import getpass
+import subprocess
+import pyautogui
 
 current_os = platform.system()
 
 
-def launch_browser():
-    browser_options = webdriver.ChromeOptions()
-    browser_options.add_argument('disable-infobars')
-    browser_options.add_argument("disable-notifications")
-
-    prefs = {
-        "protocol_handler": {"excluded_schemes,*": {"zoommtg": False}},
-        "download_restrictions": 3
-        }  # Downloads are blokced but Zoom still tries to open the desktop app. Todo: take a look later.
-    browser_options.add_experimental_option("prefs", prefs)
-    if current_os == "Windows":
-        os_specific_driver = "_win.exe"
-    elif current_os == "Darwin":
-        os_specific_driver = "_macos"
-    else:
-        os_specific_driver = "_linux"
-    browser = webdriver.Chrome(executable_path="ChromeDrivers/chromedriver" + os_specific_driver, options=browser_options)
-    browser.get('https://zoom.us/')
-    return browser
+def launch_zoom():
+    return subprocess.Popen(r'C:\Users\likes\AppData\Roaming\Zoom\bin\Zoom.exe', stdout=subprocess.PIPE)
 
 
 def main():
+    print(pyautogui.position())
     print("Zoom Email:")
     user_email = input()
     user_password = getpass.getpass()
@@ -56,20 +42,41 @@ def main():
     exit(0)
 
 
+def zoom_automate2(zoom_id, user_email, user_password, term_hour, term_minute):
+    time.sleep(5)
+    pyautogui.write(['tab', 'tab', 'enter'])
+    time.sleep(1)
+    pyautogui.write(user_email)
+    time.sleep(1)
+    pyautogui.write(['tab'])
+    time.sleep(1)
+    pyautogui.write(user_password)
+    time.sleep(1)
+    pyautogui.write(['enter'])
+    # pyautogui.moveTo(968, 560)
+    fw = pyautogui.getActiveWindow()
+    print(str(pyautogui.position().x-fw.left)+','+str(pyautogui.position().y-fw.top))
+    print("pyautogui.click()")
+    # pyautogui.click(fw.left+308, fw.top+240)
+    
+
 def zoom_automate(zoom_id, user_email, user_password, term_hour, term_minute):
-    browser = launch_browser()
-    try:
-        browser.find_element_by_xpath('//*[@id="navbar"]/ul[2]/li[5]/a')
-        # User has not logged in yet.
+    zoom = launch_zoom()
+    time.sleep(5)
+    fw = pyautogui.getActiveWindow()
+    if (fw.height<=400):
         logged_in = False
-    except selenium.common.exceptions.NoSuchElementException:
-        logged_in = True  # User has logged in.
+    else:
+        logged_in = True
 
     if not logged_in:
-        sign_in(browser, user_email, user_password)
+        sign_in(zoom, user_email, user_password)
     else:
         print("you are already logged in.")
-    wait = WebDriverWait(browser, 10)
+
+    return
+
+    wait = WebDriverWait(browser, 100)
     wait.until(EC.url_changes('https://zoom.us/signin'))
     join_meeting(browser, zoom_id)
 
@@ -86,11 +93,17 @@ def zoom_automate(zoom_id, user_email, user_password, term_hour, term_minute):
     browser.quit()
 
 
-def sign_in(browser, user_email, user_password):
-    browser.get('https://zoom.us/signin')
-    browser.find_elements_by_xpath('//*[@id="email"]')[0].send_keys(user_email)
-    browser.find_elements_by_xpath('//*[@id="password"]')[0].send_keys(user_password)
-    browser.find_elements_by_xpath('//*[@id="login-form"]/div[3]/div/div[1]/a')[0].click()
+def sign_in(zoom, user_email, user_password):
+    time.sleep(5)
+    pyautogui.write(['tab', 'tab', 'enter'])
+    time.sleep(1)
+    pyautogui.write(user_email)
+    time.sleep(1)
+    pyautogui.write(['tab'])
+    time.sleep(1)
+    pyautogui.write(user_password)
+    time.sleep(1)
+    pyautogui.write(['enter'])
 
 
 def join_meeting(browser, meeting_number):
