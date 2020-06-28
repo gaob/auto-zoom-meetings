@@ -129,41 +129,6 @@ def join_meeting(zoom, meeting_number, user_name, meeting_password):
     pyautogui.write(['enter'])    
 
 
-def join_meeting2(browser, meeting_number):
-    logged_join_button = browser.find_element_by_xpath('//*[@id="btnJoinMeeting"]')
-    logged_join_button.click()
-    browser.find_element_by_xpath('//*[@id="join-confno"]').send_keys(str(meeting_number[0:3]))
-    browser.implicitly_wait(3)  # seconds
-    browser.find_element_by_xpath('//*[@id="join-confno"]').send_keys(str(meeting_number[3:6]))
-    browser.implicitly_wait(3)  # seconds
-    browser.find_element_by_xpath('//*[@id="join-confno"]').send_keys(str(meeting_number[6:]))
-    browser.find_element_by_xpath('//*[@id="btnSubmit"]').click()
-    time.sleep(2)
-    try:
-        browser.find_element_by_xpath('//*[@id="action_container"]/div[3]/a').click()
-    except Exception:
-        try:
-            browser.find_element_by_xpath('//*[@id="launch_meeting"]/div/div[4]/a').click()
-        except Exception:
-            print("Couldn't find the WC link. Moving on.")
-
-    zoom_root_url = browser.current_url.split("//")[-1].split("/")[0]
-    destination_url = zoom_root_url + "/wc/join/" + meeting_number + "?pwd="
-    browser.get("https://" + destination_url)
-    browser.maximize_window()
-    try:
-        browser.find_element_by_xpath('//*[@id="joinBtn"]').click()
-    except Exception as e:
-        print("Could not click on button. Moving on.")
-        print(e)
-    time.sleep(3)
-    try:
-        browser.find_element_by_xpath('//*[@id="dialog-join"]/div[4]/div/div/div[1]/button').click()
-    except Exception as e:
-        print("Could not click on button. Moving on.")
-        print(e)
-
-
 def course_finished(hour, minute):
     if hour > 23 or hour < 0:
         hour %= 24
@@ -172,8 +137,10 @@ def course_finished(hour, minute):
 
     now = datetime.datetime.now()
     course_time = now.replace(hour=hour, minute=minute, second=0, microsecond=0)
-    if now >= course_time:
+    five_minutes = datetime.timedelta(minutes=5)
+    if now >= (course_time - five_minutes):
         return True
+    print("next course joins at: "+str(course_time - five_minutes)+"\tcurrent time: "+str(now))
     return False
 
 
