@@ -112,7 +112,7 @@ def join_meeting(zoom, meeting_number, user_name, meeting_password):
     print("Begin to join meeting: "+str(meeting_number))
     fw = pyautogui.getActiveWindow()
     pyautogui.click(fw.left+400, fw.top+335)
-    time.sleep(1)
+    time.sleep(2)
     pyautogui.write(meeting_number)
     pyautogui.write(['tab', 'tab'])
     pyautogui.hotkey('ctrl', 'a')
