@@ -6,16 +6,18 @@ import time, datetime, platform
 import getpass
 import subprocess
 import pyautogui
+from pathlib import Path
 
 current_os = platform.system()
 
 
-def launch_zoom():
-    return subprocess.Popen(r'C:\Users\likes\AppData\Roaming\Zoom\bin\Zoom.exe', stdout=subprocess.PIPE)
+def launch_zoom(path_home):
+    zoom_path = path_home+r'\AppData\Roaming\Zoom\bin\Zoom.exe'
+    return subprocess.Popen(zoom_path, stdout=subprocess.PIPE)
 
 
 def main():
-    print(pyautogui.position())
+    print("User Home Directory: "+str(Path.home()))
     print("Zoom Email:")
     user_email = input()
     user_password = getpass.getpass()
@@ -34,7 +36,7 @@ def main():
                 if not course_finished(course[1], course[2]):  # it's not this course's time yet.
                     continue
                 else:   # it's showtime!
-                    zoom_automate(course[0], course[4], user_email, user_password, user_name, course[1] + 2, course[2] - 10)  # 2 x 50 min, 1 x 10 min
+                    zoom_automate(course[0], course[4], user_email, user_password, user_name, course[1] + 2, course[2] - 10, path_home)  # 2 x 50 min, 1 x 10 min
                     course[3] = True  # Mark course as done.
             else:   # This course has been attended.
                 continue
@@ -62,8 +64,8 @@ def zoom_automate2(zoom_id, user_email, user_password, term_hour, term_minute):
     # pyautogui.click(fw.left+308, fw.top+240)
     
 
-def zoom_automate(zoom_id, course_password, user_email, user_password, user_name, term_hour, term_minute):
-    zoom = launch_zoom()
+def zoom_automate(zoom_id, course_password, user_email, user_password, user_name, term_hour, term_minute, path_home):
+    zoom = launch_zoom(path_home)
     print("Wait for zoom to launch.")
     time.sleep(5)
     fw = pyautogui.getActiveWindow()
