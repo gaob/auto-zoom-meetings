@@ -1,7 +1,3 @@
-from selenium import webdriver
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.ui import WebDriverWait
-import selenium.common.exceptions
 import time, datetime, platform
 import getpass
 import subprocess
