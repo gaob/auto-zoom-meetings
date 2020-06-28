@@ -40,7 +40,7 @@ def main():
                 continue
         if all_done:
             break
-        time.sleep(30)
+        time.sleep(60)
     exit(0)
 
 
