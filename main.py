@@ -29,7 +29,7 @@ def main():
             all_done = True
             if not course[3]:  # Not marked as done yet.
                 all_done = False
-                if not course_timer(course[1], course[2]):  # it's not this course's time yet.
+                if not course_finished(course[1], course[2]):  # it's not this course's time yet.
                     continue
                 else:   # it's showtime!
                     zoom_automate(course[0], user_email, user_password, course[1] + 2, course[2] - 10)  # 2 x 50 min, 1 x 10 min
@@ -53,7 +53,7 @@ def zoom_automate2(zoom_id, user_email, user_password, term_hour, term_minute):
     pyautogui.write(user_password)
     time.sleep(1)
     pyautogui.write(['enter'])
-    # pyautogui.moveTo(968, 560)
+    pyautogui.moveTo(810, 445)
     fw = pyautogui.getActiveWindow()
     print(str(pyautogui.position().x-fw.left)+','+str(pyautogui.position().y-fw.top))
     print("pyautogui.click()")
@@ -62,6 +62,7 @@ def zoom_automate2(zoom_id, user_email, user_password, term_hour, term_minute):
 
 def zoom_automate(zoom_id, user_email, user_password, term_hour, term_minute):
     zoom = launch_zoom()
+    print("Wait for zoom to launch.")
     time.sleep(5)
     fw = pyautogui.getActiveWindow()
     if (fw.height<=400):
@@ -71,16 +72,15 @@ def zoom_automate(zoom_id, user_email, user_password, term_hour, term_minute):
 
     if not logged_in:
         sign_in(zoom, user_email, user_password)
+        print("you are logged in.")
     else:
         print("you are already logged in.")
 
+    join_meeting(zoom, zoom_id)
+
     return
 
-    wait = WebDriverWait(browser, 100)
-    wait.until(EC.url_changes('https://zoom.us/signin'))
-    join_meeting(browser, zoom_id)
-
-    while not course_timer(term_hour, term_minute):
+    while not course_finished(term_hour, term_minute):
         time.sleep(60)
     # Exit buttons
     try:
@@ -94,7 +94,6 @@ def zoom_automate(zoom_id, user_email, user_password, term_hour, term_minute):
 
 
 def sign_in(zoom, user_email, user_password):
-    time.sleep(5)
     pyautogui.write(['tab', 'tab', 'enter'])
     time.sleep(1)
     pyautogui.write(user_email)
@@ -104,9 +103,22 @@ def sign_in(zoom, user_email, user_password):
     pyautogui.write(user_password)
     time.sleep(1)
     pyautogui.write(['enter'])
+    print("Wait for zoom to log in.")
+    time.sleep(5)
 
 
-def join_meeting(browser, meeting_number):
+def join_meeting(zoom, meeting_number, meeting_password = ''):
+    print("Begin to join meeting: "+str(meeting_number))
+    fw = pyautogui.getActiveWindow()
+    pyautogui.click(fw.left+400, fw.top+335)
+    time.sleep(1)
+    pyautogui.write(meeting_number)
+    pyautogui.write(['tab', 'tab'])
+    pyautogui.hotkey('ctrl', 'a')
+    pyautogui.write(['backspace'])
+
+
+def join_meeting2(browser, meeting_number):
     logged_join_button = browser.find_element_by_xpath('//*[@id="btnJoinMeeting"]')
     logged_join_button.click()
     browser.find_element_by_xpath('//*[@id="join-confno"]').send_keys(str(meeting_number[0:3]))
@@ -141,7 +153,7 @@ def join_meeting(browser, meeting_number):
         print(e)
 
 
-def course_timer(hour, minute):
+def course_finished(hour, minute):
     if hour > 23 or hour < 0:
         hour %= 24
     if minute > 59 or minute < 0:
