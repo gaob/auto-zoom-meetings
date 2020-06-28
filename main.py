@@ -8,8 +8,22 @@ current_os = platform.system()
 
 
 def launch_zoom(path_home):
-    zoom_path = path_home+r'\AppData\Roaming\Zoom\bin\Zoom.exe'
-    return subprocess.Popen(zoom_path, stdout=subprocess.PIPE)
+    zoom = get_zoom(pyautogui.getWindowsWithTitle("Zoom"))
+    if (zoom):
+        print("Obtained Zoom: "+str(zoom.title))
+        zoom.activate()
+        return zoom
+    else:
+        zoom_path = path_home+r'\AppData\Roaming\Zoom\bin\Zoom.exe'
+        return subprocess.Popen(zoom_path, stdout=subprocess.PIPE)
+
+
+def get_zoom(zoom_list):
+    for zoom in zoom_list:
+        if (zoom.title=="Zoom" or zoom.title=="Zoom Cloud Meetings"):
+            return zoom
+
+    return None
 
 
 def main():
@@ -66,7 +80,7 @@ def zoom_automate(zoom_id, course_password, user_email, user_password, user_name
     print("Wait for zoom to launch.")
     time.sleep(5)
     fw = pyautogui.getActiveWindow()
-    if (fw.height<=400):
+    if (fw.title=="Zoom Cloud Meetings"):
         logged_in = False
     else:
         logged_in = True
