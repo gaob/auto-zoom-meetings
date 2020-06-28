@@ -34,7 +34,7 @@ def main():
                 if not course_finished(course[1], course[2]):  # it's not this course's time yet.
                     continue
                 else:   # it's showtime!
-                    zoom_automate(course[0], user_email, user_password, user_name, course[1] + 2, course[2] - 10)  # 2 x 50 min, 1 x 10 min
+                    zoom_automate(course[0], course[4], user_email, user_password, user_name, course[1] + 2, course[2] - 10)  # 2 x 50 min, 1 x 10 min
                     course[3] = True  # Mark course as done.
             else:   # This course has been attended.
                 continue
@@ -62,7 +62,7 @@ def zoom_automate2(zoom_id, user_email, user_password, term_hour, term_minute):
     # pyautogui.click(fw.left+308, fw.top+240)
     
 
-def zoom_automate(zoom_id, user_email, user_password, user_name, term_hour, term_minute):
+def zoom_automate(zoom_id, course_password, user_email, user_password, user_name, term_hour, term_minute):
     zoom = launch_zoom()
     print("Wait for zoom to launch.")
     time.sleep(5)
@@ -78,7 +78,7 @@ def zoom_automate(zoom_id, user_email, user_password, user_name, term_hour, term
     else:
         print("you are already logged in.")
 
-    join_meeting(zoom, zoom_id, user_name)
+    join_meeting(zoom, zoom_id, user_name, course_password)
 
     return
 
@@ -109,7 +109,7 @@ def sign_in(zoom, user_email, user_password):
     time.sleep(5)
 
 
-def join_meeting(zoom, meeting_number, user_name, meeting_password = ''):
+def join_meeting(zoom, meeting_number, user_name, meeting_password):
     print("Begin to join meeting: "+str(meeting_number))
     fw = pyautogui.getActiveWindow()
     pyautogui.click(fw.left+400, fw.top+335)
@@ -120,6 +120,13 @@ def join_meeting(zoom, meeting_number, user_name, meeting_password = ''):
     pyautogui.write(['backspace'])
     time.sleep(1)
     pyautogui.write(user_name)
+    pyautogui.write(['enter'])
+    time.sleep(1)
+    pyautogui.write(meeting_password)
+    time.sleep(1)
+    pyautogui.write(['enter'])
+    time.sleep(1)
+    pyautogui.write(['enter'])    
 
 
 def join_meeting2(browser, meeting_number):
@@ -179,7 +186,11 @@ def get_courses(path):
             list = course.split("/")
             zoom_id = list[0].strip().replace("-", "")
             course_time = list[1].strip().split(":")
-            wrapper.append([zoom_id, int(course_time[0]), int(course_time[1]), False])
+            if (len(list) > 2):
+                zoom_password = list[2].strip()
+            else:
+                zoom_password = ''
+            wrapper.append([zoom_id, int(course_time[0]), int(course_time[1]), False, zoom_password])
     finally:
         fp.close()
     return wrapper
