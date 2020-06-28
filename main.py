@@ -17,7 +17,8 @@ def launch_zoom(path_home):
 
 
 def main():
-    print("User Home Directory: "+str(Path.home()))
+    path_home=str(Path.home())
+    print("User Home Directory: "+path_home)
     print("Zoom Email:")
     user_email = input()
     user_password = getpass.getpass()
