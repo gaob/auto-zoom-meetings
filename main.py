@@ -53,6 +53,12 @@ def main():
     user_password = getpass.getpass()
     print("Name:")
     user_name = input()
+    if (not user_name):
+        print("email:"+user_email+":user_name:"+user_name+":")
+        if (not user_email):
+            user_name = "student"
+        else:
+            user_name = user_email
     print("Getting courses...")
     courses = get_courses("courses.txt")  # [[course1, 15:40], [course2, 08:40]]
     print("Done!")
@@ -106,8 +112,8 @@ def zoom_automate(zoom_id, course_password, user_email, user_password, user_name
     zoom = launch_zoom(path_home)
     print("Wait for zoom to launch.")
     time.sleep(5)
-    fw = pyautogui.getActiveWindow()
-    if (fw.title=="Zoom Cloud Meetings"):
+    zoom = pyautogui.getActiveWindow()
+    if (zoom.title=="Zoom Cloud Meetings"):
         logged_in = False
     else:
         logged_in = True
@@ -137,8 +143,7 @@ def sign_in(zoom, user_email, user_password):
 
 def join_meeting(zoom, meeting_number, user_name, meeting_password):
     print("Begin to join meeting: "+str(meeting_number))
-    fw = pyautogui.getActiveWindow()
-    pyautogui.click(fw.left+400, fw.top+335)
+    pyautogui.click(zoom.left+400, zoom.top+335)
     time.sleep(2)
     pyautogui.write(meeting_number)
     pyautogui.write(['tab', 'tab'])
