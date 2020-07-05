@@ -3,6 +3,7 @@ import getpass
 import subprocess
 import pyautogui
 from pathlib import Path
+from datetime import date
 
 current_os = platform.system()
 
@@ -42,7 +43,7 @@ def main():
         all_done = True
         for course in courses:
             all_done = True
-            if not course[3]:  # Not marked as done yet.
+            if not course[3] and is_today(course[5]):  # Not marked as done yet.
                 all_done = False
                 if not course_finished(course[1], course[2]):  # it's not this course's time yet.
                     continue
@@ -55,24 +56,6 @@ def main():
             break
         time.sleep(60)
     exit(0)
-
-
-def zoom_automate2(zoom_id, user_email, user_password, term_hour, term_minute):
-    time.sleep(5)
-    pyautogui.write(['tab', 'tab', 'enter'])
-    time.sleep(1)
-    pyautogui.write(user_email)
-    time.sleep(1)
-    pyautogui.write(['tab'])
-    time.sleep(1)
-    pyautogui.write(user_password)
-    time.sleep(1)
-    pyautogui.write(['enter'])
-    pyautogui.moveTo(810, 445)
-    fw = pyautogui.getActiveWindow()
-    print(str(pyautogui.position().x-fw.left)+','+str(pyautogui.position().y-fw.top))
-    print("pyautogui.click()")
-    # pyautogui.click(fw.left+308, fw.top+240)
     
 
 def zoom_automate(zoom_id, course_password, user_email, user_password, user_name, term_hour, term_minute, path_home):
@@ -157,6 +140,14 @@ def course_finished(hour, minute):
     return False
 
 
+def is_today(weekday):
+    if weekday == -1:
+        return True
+    if weekday == date.today().weekday():
+        return True
+    return False
+
+
 def get_courses(path):
     wrapper = []
     try:
@@ -170,10 +161,32 @@ def get_courses(path):
                 zoom_password = list[2].strip()
             else:
                 zoom_password = ''
-            wrapper.append([zoom_id, int(course_time[0]), int(course_time[1]), False, zoom_password])
+            if (len(list) > 3):
+                weekday = int(list[3].strip())
+            else:
+                weekday = -1
+            wrapper.append([zoom_id, int(course_time[0]), int(course_time[1]), False, zoom_password, weekday])
     finally:
         fp.close()
     return wrapper
+
+
+def zoom_automate2(zoom_id, user_email, user_password, term_hour, term_minute):
+    time.sleep(5)
+    pyautogui.write(['tab', 'tab', 'enter'])
+    time.sleep(1)
+    pyautogui.write(user_email)
+    time.sleep(1)
+    pyautogui.write(['tab'])
+    time.sleep(1)
+    pyautogui.write(user_password)
+    time.sleep(1)
+    pyautogui.write(['enter'])
+    pyautogui.moveTo(810, 445)
+    fw = pyautogui.getActiveWindow()
+    print(str(pyautogui.position().x-fw.left)+','+str(pyautogui.position().y-fw.top))
+    print("pyautogui.click()")
+    # pyautogui.click(fw.left+308, fw.top+240)
 
 
 if __name__ == '__main__':
