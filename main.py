@@ -2,6 +2,7 @@ import time, datetime, platform
 import getpass
 import subprocess
 import pyautogui
+import webbrowser
 from pathlib import Path
 from datetime import date
 
@@ -17,6 +18,10 @@ def launch_zoom(path_home):
     else:
         zoom_path = path_home+r'\AppData\Roaming\Zoom\bin\Zoom.exe'
         return subprocess.Popen(zoom_path, stdout=subprocess.PIPE)
+
+
+def launch_meet(meet_id):
+    webbrowser.open('http://meet.google.com/'+meet_id)
 
 
 def get_zoom(zoom_list):
@@ -45,7 +50,7 @@ def main():
             all_done = True
             if not course[3] and is_today(course[5]):  # Not marked as done yet.
                 all_done = False
-                if not course_finished(course[1], course[2]):  # it's not this course's time yet.
+                if not course_finished(course[0], course[1], course[2]):  # it's not this course's time yet.
                     continue
                 else:   # it's showtime!
                     zoom_automate(course[0], course[4], user_email, user_password, user_name, course[1] + 2, course[2] - 10, path_home)  # 2 x 50 min, 1 x 10 min
@@ -125,7 +130,7 @@ def join_meeting(zoom, meeting_number, user_name, meeting_password):
     pyautogui.write(['enter'])    
 
 
-def course_finished(hour, minute):
+def course_finished(course_id, hour, minute):
     if hour > 23 or hour < 0:
         hour %= 24
     if minute > 59 or minute < 0:
@@ -136,7 +141,7 @@ def course_finished(hour, minute):
     five_minutes = datetime.timedelta(minutes=5)
     if now >= (course_time - five_minutes):
         return True
-    print("next course joins at: "+str(course_time - five_minutes)+"\tcurrent time: "+str(now))
+    print("next course " + course_id + " joins at: "+str(course_time - five_minutes)+"\tcurrent time: "+str(now))
     return False
 
 
