@@ -12,7 +12,6 @@ current_os = platform.system()
 def launch_zoom(path_home):
     zoom = get_zoom(pyautogui.getWindowsWithTitle("Zoom"))
     if (zoom):
-        print("Obtained Zoom: "+str(zoom.title))
         zoom.activate()
         return zoom
     else:
@@ -22,11 +21,24 @@ def launch_zoom(path_home):
 
 def launch_meet(meet_id):
     webbrowser.open('http://meet.google.com/'+meet_id)
+    time.sleep(2)
+    meet = get_meet()
+    meet.activate()
+    return meet
+
+
+def get_meet():
+    meet_list = pyautogui.getWindowsWithTitle("Meet")
+    for meet in meet_list:
+        if (meet.title.startswith("Meet")):
+            print("Obtained Meet: "+str(meet.title))
+            return meet
 
 
 def get_zoom(zoom_list):
     for zoom in zoom_list:
         if (zoom.title=="Zoom" or zoom.title=="Zoom Cloud Meetings"):
+            print("Obtained Zoom: "+str(zoom.title))
             return zoom
 
     return None
@@ -85,7 +97,7 @@ def course_automate(course_id, course_password, user_email, user_password, user_
 
 
 def meet_automate(meet_id):
-    launch_meet(meet_id)
+    meet = launch_meet(meet_id)
 
 
 def zoom_automate(zoom_id, course_password, user_email, user_password, user_name, path_home):
@@ -187,7 +199,7 @@ def get_courses(path):
     return wrapper
 
 
-def zoom_automate2(zoom_id, user_email, user_password, term_hour, term_minute):
+def pyautogui_code(zoom_id, user_email, user_password, term_hour, term_minute):
     time.sleep(5)
     pyautogui.write(['tab', 'tab', 'enter'])
     time.sleep(1)
@@ -201,6 +213,7 @@ def zoom_automate2(zoom_id, user_email, user_password, term_hour, term_minute):
     pyautogui.moveTo(810, 445)
     fw = pyautogui.getActiveWindow()
     print(str(pyautogui.position().x-fw.left)+','+str(pyautogui.position().y-fw.top))
+    print(pyautogui.getAllTitles)
     print("pyautogui.click()")
     # pyautogui.click(fw.left+308, fw.top+240)
 
