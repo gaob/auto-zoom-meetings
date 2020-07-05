@@ -21,9 +21,10 @@ def launch_zoom(path_home):
 
 def launch_meet(meet_id):
     webbrowser.open('http://meet.google.com/'+meet_id)
-    time.sleep(2)
+    time.sleep(5)
     meet = get_meet()
     meet.activate()
+    meet.maximize()
     return meet
 
 
@@ -98,6 +99,7 @@ def course_automate(course_id, course_password, user_email, user_password, user_
 
 def meet_automate(meet_id):
     meet = launch_meet(meet_id)
+    pyautogui.click(meet.left+1300, meet.top+600)
 
 
 def zoom_automate(zoom_id, course_password, user_email, user_password, user_name, path_home):
