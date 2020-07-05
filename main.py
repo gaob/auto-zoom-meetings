@@ -53,7 +53,7 @@ def main():
                 if not course_finished(course[0], course[1], course[2]):  # it's not this course's time yet.
                     continue
                 else:   # it's showtime!
-                    zoom_automate(course[0], course[4], user_email, user_password, user_name, course[1] + 2, course[2] - 10, path_home)  # 2 x 50 min, 1 x 10 min
+                    course_automate(course[0], course[4], user_email, user_password, user_name, course[1] + 2, course[2] - 10, path_home)  # 2 x 50 min, 1 x 10 min
                     course[3] = True  # Mark course as done.
             else:   # This course has been attended.
                 continue
@@ -63,7 +63,32 @@ def main():
     exit(0)
     
 
-def zoom_automate(zoom_id, course_password, user_email, user_password, user_name, term_hour, term_minute, path_home):
+def course_automate(course_id, course_password, user_email, user_password, user_name, term_hour, term_minute, path_home):
+    if course_id.isdigit():
+        zoom_automate(course_id, course_password, user_email, user_password, user_name, path_home)
+    else:
+        meet_automate(course_id)
+
+    return
+
+    while not course_finished(term_hour, term_minute):
+        time.sleep(60)
+    # Exit buttons
+    try:
+        browser.find_element_by_xpath('//*[@id="wc-footer"]/div[3]/button').click()  # Are you sure button
+        browser.find_element_by_xpath('/html/body/div[11]/div/div/div/div[2]/div/div/button').click()  # Yes button.
+    except Exception as e:
+        print(e)
+        print("Couldn't exit gracefully.")
+    time.sleep(200)
+    browser.quit()        
+
+
+def meet_automate(meet_id):
+    launch_meet(meet_id)
+
+
+def zoom_automate(zoom_id, course_password, user_email, user_password, user_name, path_home):
     zoom = launch_zoom(path_home)
     print("Wait for zoom to launch.")
     time.sleep(5)
@@ -80,20 +105,6 @@ def zoom_automate(zoom_id, course_password, user_email, user_password, user_name
         print("you are already logged in.")
 
     join_meeting(zoom, zoom_id, user_name, course_password)
-
-    return
-
-    while not course_finished(term_hour, term_minute):
-        time.sleep(60)
-    # Exit buttons
-    try:
-        browser.find_element_by_xpath('//*[@id="wc-footer"]/div[3]/button').click()  # Are you sure button
-        browser.find_element_by_xpath('/html/body/div[11]/div/div/div/div[2]/div/div/button').click()  # Yes button.
-    except Exception as e:
-        print(e)
-        print("Couldn't exit gracefully.")
-    time.sleep(200)
-    browser.quit()
 
 
 def sign_in(zoom, user_email, user_password):
