@@ -174,13 +174,13 @@ def get_courses(path):
             zoom_id = list[0].strip().replace("-", "")
             course_time = list[1].strip().split(":")
             if (len(list) > 2):
-                zoom_password = list[2].strip()
-            else:
-                zoom_password = ''
-            if (len(list) > 3):
-                weekday = int(list[3].strip())
+                weekday = int(list[2].strip())
             else:
                 weekday = -1
+            if (len(list) > 3):
+                zoom_password = list[3].strip()
+            else:
+                zoom_password = ''                
             wrapper.append([zoom_id, int(course_time[0]), int(course_time[1]), False, zoom_password, weekday])
     finally:
         fp.close()
