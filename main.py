@@ -34,6 +34,7 @@ def launch_meet(meet_id):
     meet = get_meet()
     meet.activate()
     meet.maximize()
+    time.sleep(5)
     return meet
 
 
@@ -252,11 +253,11 @@ def get_courses():
         for row in values:
             zoom_id = row[0].strip().replace("-", "")
             course_time = row[1].strip().split(":")
-            if (row[2]):
+            if (len(row)>2):
                 weekday = int(row[2].strip())
             else:
                 weekday = -1
-            if (row[3]):
+            if (len(row)>3):
                 zoom_password = row[3].strip()
             else:
                 zoom_password = ''                

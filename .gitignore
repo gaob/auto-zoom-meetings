@@ -7,3 +7,5 @@ dist/*
 build/*
 ReadMe.txt
 main.spec
+credentials.json
+token.pickle
