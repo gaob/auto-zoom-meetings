@@ -78,7 +78,7 @@ def main():
             all_done = True
             if not course[3] and is_today(course[5]):  # Not marked as done yet.
                 all_done = False
-                if not course_finished(course[0], course[1], course[2]):  # it's not this course's time yet.
+                if not course_approaching(course[0], course[1], course[2]):  # it's not this course's time yet.
                     continue
                 else:   # it's showtime!
                     course_automate(course[0], course[4], user_email, user_password, user_name, course[1] + 2, course[2] - 10, path_home)  # 2 x 50 min, 1 x 10 min
@@ -169,7 +169,7 @@ def join_meeting(zoom, meeting_number, user_name, meeting_password):
     pyautogui.write(['enter'])    
 
 
-def course_finished(course_id, hour, minute):
+def course_approaching(course_id, hour, minute):
     if hour > 23 or hour < 0:
         hour %= 24
     if minute > 59 or minute < 0:
