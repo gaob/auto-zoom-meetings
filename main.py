@@ -3,10 +3,19 @@ import getpass
 import subprocess
 import pyautogui
 import webbrowser
+import pickle
+import os.path
 from pathlib import Path
 from datetime import date
+from googleapiclient.discovery import build
+from google_auth_oauthlib.flow import InstalledAppFlow
+from google.auth.transport.requests import Request
 
 current_os = platform.system()
+
+# The ID and range of a sample spreadsheet.
+SAMPLE_SPREADSHEET_ID = '1TgnLNDqjqH_TNAyxotZNgICu4WOLcRwDlpN0O6Jx1lc'
+SAMPLE_RANGE_NAME = 'Courses'
 
 
 def launch_zoom(path_home):
@@ -54,13 +63,12 @@ def main():
     print("Name:")
     user_name = input()
     if (not user_name):
-        print("email:"+user_email+":user_name:"+user_name+":")
         if (not user_email):
             user_name = "student"
         else:
             user_name = user_email
     print("Getting courses...")
-    courses = get_courses("courses.txt")  # [[course1, 15:40], [course2, 08:40]]
+    courses = get_courses()  # [[course1, 15:40], [course2, 08:40]]
     print("Done!")
     print("Please wait. You will be logged in automatically when the time comes. Do not close this window. [Press CTRL + C to terminate!]")
     while True:
@@ -183,7 +191,7 @@ def is_today(weekday):
     return False
 
 
-def get_courses(path):
+def get_courses_from(path):
     wrapper = []
     try:
         fp = open('courses.txt', 'r')
@@ -204,6 +212,56 @@ def get_courses(path):
     finally:
         fp.close()
     return wrapper
+
+
+def get_courses():
+    """Shows basic usage of the Sheets API.
+    Prints values from a sample spreadsheet.
+    """
+    creds = None
+    # The file token.pickle stores the user's access and refresh tokens, and is
+    # created automatically when the authorization flow completes for the first
+    # time.
+    if os.path.exists('token.pickle'):
+        with open('token.pickle', 'rb') as token:
+            creds = pickle.load(token)
+    # If there are no (valid) credentials available, let the user log in.
+    if not creds or not creds.valid:
+        if creds and creds.expired and creds.refresh_token:
+            creds.refresh(Request())
+        else:
+            flow = InstalledAppFlow.from_client_secrets_file(
+                'credentials.json', SCOPES)
+            creds = flow.run_local_server(port=0)
+        # Save the credentials for the next run
+        with open('token.pickle', 'wb') as token:
+            pickle.dump(creds, token)
+
+    service = build('sheets', 'v4', credentials=creds)
+
+    # Call the Sheets API
+    sheet = service.spreadsheets()
+    result = sheet.values().get(spreadsheetId=SAMPLE_SPREADSHEET_ID,
+                                range=SAMPLE_RANGE_NAME).execute()
+    values = result.get('values', [])
+
+    wrapper = []
+    if not values:
+        print('No data found.')
+    else:
+        for row in values:
+            zoom_id = row[0].strip().replace("-", "")
+            course_time = row[1].strip().split(":")
+            if (row[2]):
+                weekday = int(row[2].strip())
+            else:
+                weekday = -1
+            if (row[3]):
+                zoom_password = row[3].strip()
+            else:
+                zoom_password = ''                
+            wrapper.append([zoom_id, int(course_time[0]), int(course_time[1]), False, zoom_password, weekday])
+    return wrapper            
 
 
 def pyautogui_code(zoom_id, user_email, user_password, term_hour, term_minute):
