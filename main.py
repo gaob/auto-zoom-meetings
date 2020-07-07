@@ -70,11 +70,10 @@ def main():
             user_name = "student"
         else:
             user_name = user_email
-    print("Getting courses...")
-    courses = get_courses()  # [[course1, 15:40], [course2, 08:40]]
-    print("Done!")
     print("Please wait. You will be logged in automatically when the time comes. Do not close this window. [Press CTRL + C to terminate!]")
     while True:
+        courses = get_courses()
+        print("Refreshed courses...")
         all_done = True
         for course in courses:
             all_done = True
