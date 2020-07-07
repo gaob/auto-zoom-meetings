@@ -114,6 +114,7 @@ def course_automate(course_id, course_password, user_email, user_password, user_
 
 def meet_automate(meet_id):
     meet = launch_meet(meet_id)
+    pyautogui.click(meet.left+700, meet.top+750)
     pyautogui.click(meet.left+1300, meet.top+600)
 
 
