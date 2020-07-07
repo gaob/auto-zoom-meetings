@@ -72,24 +72,26 @@ def main():
             user_name = user_email
     print("Please wait. You will be logged in automatically when the time comes. Do not close this window. [Press CTRL + C to terminate!]")
     while True:
-        courses = get_courses()
-        print("Refreshed courses...")
-        all_done = True
-        for course in courses:
+        while True:
+            courses = get_courses()
+            print("Refreshed courses...")
             all_done = True
-            if is_today(course[5]) and (course[0]+str(course[1])+str(course[2])) not in attended:  # Not marked as done yet.
-                all_done = False
-                if not course_approaching(course[0], course[1], course[2]):  # it's not this course's time yet.
+            for course in courses:
+                all_done = True
+                if is_today(course[5]) and (course[0]+str(course[1])+str(course[2])) not in attended:  # Not marked as done yet.
+                    all_done = False
+                    if not course_approaching(course[0], course[1], course[2]):  # it's not this course's time yet.
+                        continue
+                    else:   # it's showtime!
+                        course_automate(course[0], course[4], user_email, user_password, user_name, course[1] + 2, course[2] - 10, path_home)  # 2 x 50 min, 1 x 10 min
+                        attended[(course[0]+str(course[1])+str(course[2]))] = True  # Mark course as done.
+                else:   # This course has been attended.
                     continue
-                else:   # it's showtime!
-                    course_automate(course[0], course[4], user_email, user_password, user_name, course[1] + 2, course[2] - 10, path_home)  # 2 x 50 min, 1 x 10 min
-                    attended[(course[0]+str(course[1])+str(course[2]))] = True  # Mark course as done.
-            else:   # This course has been attended.
-                continue
-        if all_done:
-            break
-        time.sleep(60)
-    print("Attended: "+str(attended))
+            if all_done:
+                break
+            time.sleep(60)
+        print("No new courses. Have attended: "+str(attended))
+        time.sleep(300)
     exit(0)
     
 
