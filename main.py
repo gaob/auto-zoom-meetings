@@ -60,11 +60,20 @@ def main():
     
     path_home=str(Path.home())
     print("User Home Directory: "+path_home)
-    print("Zoom Email:")
-    user_email = input()
-    user_password = getpass.getpass()
-    print("Name:")
-    user_name = input()
+    user_info = get_zoom_userinfo_from(path_home)
+    user_email = None
+    user_password = None
+    user_name = None
+    if user_info:
+        user_email = user_info[0]
+        user_password = user_info[1]
+        user_name = user_info[2]
+    else:
+        print("Zoom Email:")
+        user_email = input()
+        user_password = getpass.getpass()
+        print("Name:")
+        user_name = input()
     if (not user_name):
         if (not user_email):
             user_name = "student"
@@ -197,24 +206,15 @@ def is_today(weekday):
     return False
 
 
-def get_courses_from(path):
-    wrapper = []
+def get_zoom_userinfo_from(path):
+    wrapper = None
     try:
-        fp = open('courses.txt', 'r')
-        courses = fp.readlines()
-        for course in courses:
-            list = course.split("/")
-            zoom_id = list[0].strip().replace("-", "")
-            course_time = list[1].strip().split(":")
-            if (len(list) > 2):
-                weekday = int(list[2].strip())
-            else:
-                weekday = -1
-            if (len(list) > 3):
-                zoom_password = list[3].strip()
-            else:
-                zoom_password = ''                
-            wrapper.append([zoom_id, int(course_time[0]), int(course_time[1]), False, zoom_password, weekday])
+        fp = open('userinfo.txt', 'r')
+        user_email = fp.readline()
+        user_password = fp.readline()
+        user_name = fp.readline()
+
+        wrapper = [user_email, user_password, user_name]
     finally:
         fp.close()
     return wrapper
