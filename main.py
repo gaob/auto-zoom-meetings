@@ -166,7 +166,9 @@ def sign_in(zoom, user_email, user_password):
 
 def join_meeting(zoom, meeting_number, user_name, meeting_password):
     print("Begin to join meeting: "+str(meeting_number))
-    pyautogui.click(zoom.left+400, zoom.top+335)
+    zoom.maximize()
+    time.sleep(2)
+    pyautogui.click(zoom.left+830, zoom.top+450)
     time.sleep(2)
     pyautogui.write(meeting_number)
     pyautogui.write(['tab', 'tab'])
