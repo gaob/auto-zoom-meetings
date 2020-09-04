@@ -259,6 +259,7 @@ def get_courses():
     else:
         for row in values:
             zoom_id = row[0].strip().replace("-", "")
+            zoom_id = zoom_id.strip().replace(" ", "")
             course_time = row[1].strip().split(":")
             if (len(row)>2):
                 weekday = int(row[2].strip())
