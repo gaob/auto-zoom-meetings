@@ -147,7 +147,8 @@ def zoom_automate(zoom_id, course_password, user_email, user_password, user_name
     else:
         print("you are already logged in.")
 
-    join_meeting(zoom, zoom_id, user_name, course_password)
+    join_meeting(zoom_id, user_name, course_password)
+    print("Joined meeting id: " + zoom_id)
 
 
 def sign_in(zoom, user_email, user_password):
@@ -164,11 +165,15 @@ def sign_in(zoom, user_email, user_password):
     time.sleep(5)
 
 
-def join_meeting(zoom, meeting_number, user_name, meeting_password):
+def join_meeting(meeting_number, user_name, meeting_password):
     print("Begin to join meeting: "+str(meeting_number))
+    zoom = get_zoom(pyautogui.getWindowsWithTitle("Zoom"))
+    zoom.activate()
     zoom.maximize()
     time.sleep(2)
-    pyautogui.click(zoom.left+830, zoom.top+450)
+    // Small screen mouse positions
+    // pyautogui.click(zoom.left+830, zoom.top+450)
+    pyautogui.click(zoom.left+1130, zoom.top+600)
     time.sleep(2)
     pyautogui.write(meeting_number)
     pyautogui.write(['tab', 'tab'])
@@ -288,8 +293,6 @@ def pyautogui_code(zoom_id, user_email, user_password, term_hour, term_minute):
     fw = pyautogui.getActiveWindow()
     print(str(pyautogui.position().x-fw.left)+','+str(pyautogui.position().y-fw.top))
     print(pyautogui.getAllTitles)
-    print("pyautogui.click()")
-    # pyautogui.click(fw.left+308, fw.top+240)
 
 
 if __name__ == '__main__':
