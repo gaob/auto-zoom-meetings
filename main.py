@@ -127,8 +127,12 @@ def course_automate(course_id, course_password, user_email, user_password, user_
 
 def meet_automate(meet_id):
     meet = launch_meet(meet_id)
-    pyautogui.click(meet.left+700, meet.top+750)
-    pyautogui.click(meet.left+1300, meet.top+600)
+    # Small screen mute button.
+    # pyautogui.click(meet.left+700, meet.top+750)
+    pyautogui.click(meet.left+1000, meet.top+925)
+    # Small screen Ask to join button.
+    # pyautogui.click(meet.left+1300, meet.top+600)
+    pyautogui.click(meet.left+1650, meet.top+750)
 
 
 def zoom_automate(zoom_id, course_password, user_email, user_password, user_name, path_home):
@@ -171,8 +175,8 @@ def join_meeting(meeting_number, user_name, meeting_password):
     zoom.activate()
     zoom.maximize()
     time.sleep(2)
-    // Small screen mouse positions
-    // pyautogui.click(zoom.left+830, zoom.top+450)
+    # Small screen mouse positions
+    # pyautogui.click(zoom.left+830, zoom.top+450)
     pyautogui.click(zoom.left+1130, zoom.top+600)
     time.sleep(2)
     pyautogui.write(meeting_number)
