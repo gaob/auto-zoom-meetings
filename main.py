@@ -203,6 +203,9 @@ def course_approaching(course_id, hour, minute):
     now = datetime.datetime.now()
     course_time = now.replace(hour=hour, minute=minute, second=0, microsecond=0)
     five_minutes = datetime.timedelta(minutes=5)
+    default_duration = datetime.timedelta(minutes=45)
+    if now >= (course_time + default_duration):
+        return False
     if now >= (course_time - five_minutes):
         return True
     print("next course " + course_id + " joins at: "+str(course_time - five_minutes)+"\tcurrent time: "+str(now))
