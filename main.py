@@ -209,10 +209,10 @@ def course_approaching(course_id, hour, minute):
     return False
 
 
-def is_today(weekday):
-    if weekday == -1:
+def is_today(weekdays):
+    if weekdays == "":
         return True
-    if weekday == date.today().weekday():
+    if weekdays == str(date.today().weekday()):
         return True
     return False
 
@@ -271,14 +271,14 @@ def get_courses():
             zoom_id = zoom_id.strip().replace(" ", "")
             course_time = row[1].strip().split(":")
             if (len(row)>2):
-                weekday = int(row[2].strip())
+                weekdays = row[2].strip()
             else:
-                weekday = -1
+                weekdays = ""
             if (len(row)>3):
                 zoom_password = row[3].strip()
             else:
                 zoom_password = ''                
-            wrapper.append([zoom_id, int(course_time[0]), int(course_time[1]), False, zoom_password, weekday])
+            wrapper.append([zoom_id, int(course_time[0]), int(course_time[1]), False, zoom_password, weekdays])
     return wrapper            
 
 
