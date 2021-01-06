@@ -212,7 +212,7 @@ def course_approaching(course_id, hour, minute):
 def is_today(weekdays):
     if weekdays == "":
         return True
-    if weekdays == str(date.today().weekday()):
+    if str(date.today().weekday()) in weekdays:
         return True
     return False
 
